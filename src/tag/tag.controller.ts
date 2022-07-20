@@ -1,5 +1,5 @@
 import { Root } from '@justforlxz/tools';
-import { Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, Request } from '@nestjs/common';
 import { SettingsService } from '../settings/settings.service';
 import { TagService } from './tag.service';
 
@@ -30,7 +30,8 @@ export class TagController {
   async check(
     @Req() request: Request,
     @Param('repo') repo: string,
-    @Param('config') config: Root,
+    @Param('tag') tag: string,
+    @Param('sha') sha: string,
   ) {
     return this.tagService.check(
       this.settings.appInfo(),
@@ -38,7 +39,19 @@ export class TagController {
         owner: 'linuxdeepin',
         repo,
       },
-      config,
+      {
+        repo,
+        data: {
+          tag,
+          object: sha,
+          tagger: {
+            name: '',
+            email: '',
+          },
+          message: '',
+        },
+        apiVersion: '',
+      },
     );
   }
 }
