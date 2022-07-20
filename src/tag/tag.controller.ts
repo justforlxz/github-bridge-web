@@ -1,5 +1,16 @@
 import { Root } from '@justforlxz/tools';
-import { Controller, Get, Param, Post, Req, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Request,
+  Response,
+  Res,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
 import { SettingsService } from '../settings/settings.service';
 import { TagService } from './tag.service';
 
@@ -13,8 +24,8 @@ export class TagController {
   @Post('create')
   async create(
     @Req() request: Request,
-    @Param('repo') repo: string,
-    @Param('config') config: Root,
+    @Query('repo') repo: string,
+    @Query('config') config: Root,
   ) {
     return this.tagService.createTag(
       this.settings.appInfo(),
@@ -28,12 +39,11 @@ export class TagController {
 
   @Get('check')
   async check(
-    @Req() request: Request,
-    @Param('repo') repo: string,
-    @Param('tag') tag: string,
-    @Param('sha') sha: string,
+    @Query('repo') repo: string,
+    @Query('tag') tag: string,
+    @Query('sha') object: string,
   ) {
-    return this.tagService.check(
+    const result = await this.tagService.check(
       this.settings.appInfo(),
       {
         owner: 'linuxdeepin',
@@ -43,7 +53,7 @@ export class TagController {
         repo,
         data: {
           tag,
-          object: sha,
+          object,
           tagger: {
             name: '',
             email: '',
@@ -53,5 +63,9 @@ export class TagController {
         apiVersion: '',
       },
     );
+
+    if (result === 1) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
   }
 }
