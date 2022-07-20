@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  dev:
+    container_name: server-dev
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: npm run start:debug
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - WORKDIR:/usr/src/app/
+      - CONFIG_NAME:config
+    restart: unless-stopped
+
+  prod:
+    container_name: server-prod
+    build:
+      context: .
+      target: production
+      dockerfile: ./Dockerfile
+    command: npm run start:prod
+    ports:
+      - 3000:3000
+    environment:
+      - WORKDIR:/usr/src/app/
+      - CONFIG_NAME:config
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
