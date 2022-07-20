@@ -15,24 +15,37 @@ export class PullsController {
       owner: this.settings.config.github.owner,
       repo: 'release',
     };
-    return this.service.create(this.settings.appInfo(), context, body);
-  }
 
-  @Post('merge')
-  async merge(@Body() body: Root) {
-    const context: Context = {
-      owner: this.settings.config.github.owner,
-      repo: 'release',
-    };
-    return this.service.merge(this.settings.appInfo(), context, body);
-  }
+    try {
+      const check = await this.service.check(
+        this.settings.appInfo(),
+        context,
+        body,
+      );
+      if (check !== 0) {
+        throw new Error();
+      }
+    } catch (err) {
+      return {
+        code: 201,
+        message: 'check tag failed.',
+        data: body,
+      };
+    }
 
-  @Post('close')
-  async close(@Body() body: Root) {
-    const context: Context = {
-      owner: this.settings.config.github.owner,
-      repo: 'release',
-    };
-    return this.service.close(this.settings.appInfo(), context, body);
+    try {
+      await this.service.create(this.settings.appInfo(), context, body);
+      return {
+        code: 200,
+        message: 'request create tag successd.',
+        data: body,
+      };
+    } catch (err) {
+      return {
+        code: 201,
+        message: 'create tag failed.',
+        data: body,
+      };
+    }
   }
 }

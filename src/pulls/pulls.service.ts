@@ -1,4 +1,4 @@
-import { GetToken, Context, Tag, Upload, Root } from '@justforlxz/tools';
+import { GetToken, Context, Tag, Upload, Root, Check } from '@justforlxz/tools';
 import { Injectable } from '@nestjs/common';
 import { Octokit } from '@octokit/rest';
 import { App } from '../types';
@@ -85,18 +85,11 @@ async function uploadFile(octokit: Octokit, root: Root, context: Context) {
 export class PullsService {
   async create(app: App, context: Context, config: Root) {
     const octokit = new Octokit({ auth: await GetToken(app, context) });
-    try {
-      uploadFile(octokit, config, context);
-    } catch (e) {
-      console.log(e);
-      throw new Error(e);
-    }
+    return await Tag(octokit, config);
   }
 
-  async merge(app: App, context: Context, config: Root) {
-    return;
-  }
-  async close(app: App, context: Context, config: Root) {
-    return;
+  async check(app: App, context: Context, config: Root) {
+    const octokit = new Octokit({ auth: await GetToken(app, context) });
+    return await Check(octokit, config);
   }
 }

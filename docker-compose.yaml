@@ -13,8 +13,8 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     environment:
-      - WORKDIR:/usr/src/app/
-      - CONFIG_NAME:config
+      - WORKDIR=/usr/src/app/
+      - CONFIG_NAME=config.json
     restart: unless-stopped
 
   prod:
@@ -27,8 +27,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      - WORKDIR:/usr/src/app/
-      - CONFIG_NAME:config
+      - WORKDIR=/usr/src/app/
+      - CONFIG_NAME=config.json
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
