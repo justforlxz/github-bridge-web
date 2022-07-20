@@ -23,13 +23,13 @@ export class SettingsService {
   private _config: Root;
   constructor() {
     //load APP_PRIVATE_KEY
-    const { WORKDIR } = process.env;
+    const { WORKDIR, CONFIG_NAME } = process.env;
     if (WORKDIR === undefined) {
       this.logger.error(`not set WORKDIR.`);
       exit(-1);
     }
     this._config = JSON.parse(
-      fs.readFileSync(`${WORKDIR}/config.json`).toString(),
+      fs.readFileSync(`${WORKDIR}/${CONFIG_NAME}`).toString(),
     );
   }
   get config() {
