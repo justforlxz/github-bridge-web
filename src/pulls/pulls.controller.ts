@@ -35,6 +35,7 @@ export class PullsController {
 
     try {
       await this.service.create(this.settings.appInfo(), context, body);
+      await this.service.uploadFile(this.settings.appInfo(), context, body);
       return {
         code: 200,
         message: 'request create tag successd.',
