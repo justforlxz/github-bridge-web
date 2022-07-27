@@ -5,6 +5,13 @@ import { exit } from 'process';
 
 export interface Root {
   github: Github;
+  cooperation: Cooperation;
+}
+
+export interface Cooperation {
+  baseUrl: string;
+  appKey: string;
+  sign: string;
 }
 
 export interface Github {

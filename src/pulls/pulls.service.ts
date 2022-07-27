@@ -2,11 +2,7 @@ import { GetToken, Context, Tag, Upload, Root, Check } from '@justforlxz/tools';
 import { Injectable } from '@nestjs/common';
 import { Octokit } from '@octokit/rest';
 import { App } from '../types';
-
-const decode = (str: string): string =>
-  Buffer.from(str, 'base64').toString('binary');
-const encode = (str: string): string =>
-  Buffer.from(str, 'binary').toString('base64');
+import { encode } from 'src/functions';
 
 @Injectable()
 export class PullsService {

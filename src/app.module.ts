@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SettingsModule } from './settings/settings.module';
 import { PullsModule } from './pulls/pulls.module';
+import { ContributeModule } from './contribute/contribute.module';
 
 @Module({
-  imports: [SettingsModule, PullsModule],
+  imports: [SettingsModule, PullsModule, ContributeModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -23,7 +23,7 @@ export class PullsController {
         body,
       );
       if (check !== 0) {
-        throw new Error();
+        throw new Error(`check tag failed. code is ${check}`);
       }
     } catch (err) {
       return {
