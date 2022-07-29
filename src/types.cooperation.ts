@@ -14,6 +14,7 @@ export enum RowEnum {
   DELETION = '62ce6ec6d578c6f39c53bd10',
   REPO = '62ce6cc05d203fc6009f7be8',
   URL = '62ce6c135d203fc6009f7bd1',
+  CUR_STATE = '62cbcd734f0cd46903df573d',
 }
 
 export interface Row {

@@ -37,6 +37,9 @@ export class ContributeService {
 
     const infos: Map<string, Info> = new Map<string, Info>();
     for (const item of result.data.data.rows) {
+      if (item[RowEnum.CUR_STATE] === 'Merged') {
+        continue;
+      }
       const meta: Repo = JSON.parse(item[RowEnum.REPO])[0];
       const repo = meta.name;
       const source_value: SourceValue = JSON.parse(meta.sourcevalue);
@@ -64,7 +67,13 @@ export class ContributeService {
     markdown += `\n Note: Contributions submitted upstream do not always use the email of the deepin or uniontech domains, and contributions that are not merged in will be counted as well.\n`;
     markdown += `| Name | Contributions | Repository |\n`;
     markdown += `| --- | --- | --- |\n`;
+    const a: Info[] = [];
     for (const [key, value] of infos) {
+      a.push(value);
+    }
+    a.sort((a, b) => a.repo.localeCompare(b.repo));
+
+    for (const value of a) {
       const line = `| ${value.repo} | ${value.addition + value.deletion} | ${
         value.url
       } |\n`;
