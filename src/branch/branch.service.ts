@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SettingsService } from 'src/settings/settings.service';
-import { IBranchCreateOptions, IBranchDeleteOptions } from 'src/types.branch';
+import { IBranchCreateOptions, IBranchPutOptions } from 'src/types.branch';
 import { Octokit } from '@octokit/rest';
 import { GetToken } from '@justforlxz/tools';
 
 @Injectable()
 export class BranchService {
+  private readonly logger: Logger = new Logger(BranchService.name);
   constructor(private readonly settings: SettingsService) {}
   async create(branch: string, body: IBranchCreateOptions) {
     const context = {
@@ -24,17 +25,13 @@ export class BranchService {
         const repo = await octokit.request('GET /repos/{owner}/{repo}', {
           ...context,
         });
-        try {
-          const result = await octokit.git.getRef({
-            ...context,
-            ref: `heads/${repo.data.default_branch}`,
-          });
-          sha = result.data.object.sha;
-        } catch (err) {
-          console.error(err);
-        }
+        const result = await octokit.git.getRef({
+          ...context,
+          ref: `heads/${repo.data.default_branch}`,
+        });
+        sha = result.data.object.sha;
       } catch (err) {
-        console.error(err);
+        this.logger.error(err);
       }
     } else {
       // 检测 branch 是不是 ref，或者 sha
@@ -57,14 +54,14 @@ export class BranchService {
         sha,
       });
     } catch (err) {
-      console.error(err);
+      this.logger.error(err);
       return err;
     }
   }
-  async delete(branch: string, body: IBranchDeleteOptions) {
+  async delete(repo: string, branch: string) {
     const context = {
       owner: this.settings.config.github.owner,
-      repo: body.repo,
+      repo,
     };
 
     const octokit = new Octokit({
@@ -75,5 +72,24 @@ export class BranchService {
       ...context,
       ref: `heads/${branch}`,
     });
+  }
+
+  async lock(body: IBranchPutOptions, branch: string) {
+    const context = {
+      owner: this.settings.config.github.owner,
+      repo: body.repo,
+    };
+
+    const octokit = new Octokit({
+      auth: await GetToken(this.settings.appInfo(), context),
+    });
+
+    return await octokit.request(
+      'GET /repos/{owner}/{repo}/branches/{branch}/protection',
+      {
+        ...context,
+        branch: `heads/${branch}`,
+      },
+    );
   }
 }
