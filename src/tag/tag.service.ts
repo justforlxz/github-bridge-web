@@ -5,7 +5,7 @@ import { App } from '../types';
 import { encode } from 'src/functions';
 
 @Injectable()
-export class PullsService {
+export class TagService {
   async create(app: App, context: Context, config: Root) {
     const octokit = new Octokit({ auth: await GetToken(app, context) });
     return await Tag(octokit, config);

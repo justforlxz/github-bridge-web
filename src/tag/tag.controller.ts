@@ -1,14 +1,11 @@
 import { Context, Root } from '@justforlxz/tools';
 import { Body, Controller, Post } from '@nestjs/common';
 import { SettingsService } from '../settings/settings.service';
-import { PullsService } from './pulls.service';
+import { TagService } from './tag.service';
 
-@Controller('pulls')
-export class PullsController {
-  constructor(
-    private service: PullsService,
-    private settings: SettingsService,
-  ) {}
+@Controller('tag')
+export class TagController {
+  constructor(private service: TagService, private settings: SettingsService) {}
   @Post('create')
   async create(@Body() body: Root) {
     const context: Context = {
