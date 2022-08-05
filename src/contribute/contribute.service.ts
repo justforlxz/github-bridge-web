@@ -17,15 +17,15 @@ export class ContributeService {
   english() {
     let markdown = `This page records summary statistics on the number of contributions deepin has made to upstream. The corresponding contributions have been submitted and merged into the upstream codebase.\n`;
     markdown += `\nNote: Contributions submitted upstream do not always use the email of the deepin or uniontech domains.\n`;
-    markdown += `| Name | Contributions | Repository |\n`;
-    markdown += `| --- | --- | --- |\n`;
+    markdown += `| Name | Contributions | Pull Requests | Repository |\n`;
+    markdown += `| --- | --- | --- | --- |\n`;
     return markdown;
   }
   chinese() {
     let markdown = `此页面展示了 deepin 对上游源码做出的贡献的数量统计。与之对应的贡献均已提交并合入到上游代码仓库中。\n`;
     markdown += `\n注：对上游的代码贡献有可能使用了 deepin 或 uniontech 之外域名的邮箱。\n`;
-    markdown += `| 项目 | 贡献代码量 | 仓库地址 |\n`;
-    markdown += `| --- | --- | --- |\n`;
+    markdown += `| 项目 | 贡献代码量 | 提交数量 | 仓库地址 |\n`;
+    markdown += `| --- | --- | --- | --- |\n`;
     return markdown;
   }
   async upload(filename: string, body: string) {
@@ -49,8 +49,12 @@ export class ContributeService {
           })
         ).data as {
           sha: string;
+          content: string;
         };
         contentRef = content.sha;
+        if (content.content === encode(body)) {
+          return;
+        }
       } catch (err) {}
 
       await octokit.repos.createOrUpdateFileContents({
@@ -94,6 +98,7 @@ export class ContributeService {
       addition: number;
       deletion: number;
       url: string;
+      pr: number;
     }
 
     const infos: Map<string, Info> = new Map<string, Info>();
@@ -114,12 +119,14 @@ export class ContributeService {
       if (v !== undefined) {
         v.addition += addition;
         v.deletion += deletion;
+        v.pr += 1;
       } else {
         v = {
           repo,
           addition,
           deletion,
           url,
+          pr: 1,
         };
       }
       infos.set(repo, v);
@@ -134,9 +141,9 @@ export class ContributeService {
     let english = this.english();
 
     for (const value of a) {
-      const line = `| ${value.repo} | ${value.addition + value.deletion} | ${
-        value.url
-      } |\n`;
+      const line = `| ${value.repo} | ${
+        value.addition + value.deletion
+      } | ${String(value.pr)} | ${value.url} |\n`;
       chinese += line;
       english += line;
     }
