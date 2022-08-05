@@ -103,7 +103,7 @@ export class ContributeService {
 
     const infos: Map<string, Info> = new Map<string, Info>();
     for (const item of result.data.data.rows) {
-      if (item[RowEnum.CUR_STATE] === 'Merged') {
+      if (item[RowEnum.CUR_STATE] !== 'Merged') {
         continue;
       }
       const meta: Repo = JSON.parse(item[RowEnum.REPO])[0];
