@@ -1,8 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { Root, RowEnum, Repo, SourceValue } from 'src/types.cooperation';
-import * as fs from 'fs';
+import { Root, Row, RowEnum, Repo, SourceValue } from 'src/types.cooperation';
 import { encode } from 'src/functions';
 import { SettingsService } from 'src/settings/settings.service';
 import { GetToken } from '@justforlxz/tools';
@@ -80,19 +79,31 @@ export class ContributeService {
     return;
   }
   async update() {
-    const result = await firstValueFrom(
-      this.axios.post<Root>(
-        `${this.settings.config.cooperation.baseUrl}/api/v2/open/worksheet/getFilterRows`,
-        {
-          appKey: this.settings.config.cooperation.appKey,
-          sign: this.settings.config.cooperation.sign,
-          worksheetId: 'sybddj',
-          viewId: '62cbca4b4f0cd46903df571c',
-          pageSize: 99999,
-          filters: [],
-        },
-      ),
-    );
+    const result: Row[] = [];
+    let pageIndex = 1;
+    do {
+      const v = await firstValueFrom(
+        this.axios.post<Root>(
+          `${this.settings.config.cooperation.baseUrl}/api/v2/open/worksheet/getFilterRows`,
+          {
+            appKey: this.settings.config.cooperation.appKey,
+            sign: this.settings.config.cooperation.sign,
+            worksheetId: 'sybddj',
+            viewId: '62cbca4b4f0cd46903df571c',
+            pageSize: 999,
+            pageIndex,
+            isAsc: false,
+            filters: [],
+          },
+        ),
+      );
+      pageIndex += 1;
+      if (!v.data.data.rows.length) {
+        break;
+      }
+      result.push(...v.data.data.rows);
+    } while (true);
+
     interface Info {
       repo: string;
       addition: number;
@@ -102,7 +113,7 @@ export class ContributeService {
     }
 
     const infos: Map<string, Info> = new Map<string, Info>();
-    for (const item of result.data.data.rows) {
+    for (const item of result) {
       if (item[RowEnum.CUR_STATE] !== 'Merged') {
         continue;
       }
