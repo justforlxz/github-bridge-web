@@ -23,10 +23,9 @@ export class TagController {
         throw new Error(`check tag failed. code is ${check}`);
       }
     } catch (err) {
-      console.log(err);
       return {
         code: 201,
-        message: 'check tag failed.',
+        message: err,
         data: body,
       };
     }
