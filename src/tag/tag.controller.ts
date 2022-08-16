@@ -10,7 +10,7 @@ export class TagController {
   async create(@Body() body: Root) {
     const context: Context = {
       owner: this.settings.config.github.owner,
-      repo: 'release',
+      repo: body.repo,
     };
 
     try {
@@ -32,7 +32,14 @@ export class TagController {
 
     try {
       await this.service.create(this.settings.appInfo(), context, body);
-      await this.service.uploadFile(this.settings.appInfo(), context, body);
+      await this.service.uploadFile(
+        this.settings.appInfo(),
+        {
+          owner: context.owner,
+          repo: 'release',
+        },
+        body,
+      );
       return {
         code: 200,
         message: 'request create tag successd.',
