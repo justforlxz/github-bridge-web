@@ -38,10 +38,11 @@ export class BranchService {
       try {
         const result = await octokit.git.getRef({
           ...context,
-          ref: `heads/${body.base_branch}`,
+          ref: `tags/${body.base_branch}`,
         });
         sha = result.data.object.sha;
       } catch (err) {
+        this.logger.error(err);
         sha = body.base_branch;
       }
     }
@@ -54,8 +55,7 @@ export class BranchService {
         sha,
       });
     } catch (err) {
-      this.logger.error(err);
-      return err;
+      throw new Error(err);
     }
   }
   async delete(repo: string, branch: string) {
