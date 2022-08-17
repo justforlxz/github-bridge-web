@@ -55,7 +55,7 @@ export class BranchService {
         sha,
       });
     } catch (err) {
-      throw new Error(err);
+      throw err;
     }
   }
   async delete(repo: string, branch: string) {

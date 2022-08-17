@@ -73,7 +73,7 @@ export class ContributeService {
         sha: contentRef,
       });
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
 
     return;
@@ -164,7 +164,7 @@ export class ContributeService {
       await this.upload('README.md', english);
       await this.upload('README.zh.md', chinese);
     } catch (err) {
-      throw new Error(err);
+      throw err;
     }
 
     return;

@@ -1,27 +1,21 @@
 import { Context, Root } from '@justforlxz/tools';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { SettingsService } from '../settings/settings.service';
 import { TagService } from './tag.service';
+import { Response } from 'express';
 
 @Controller('tag')
 export class TagController {
   constructor(private service: TagService, private settings: SettingsService) {}
   @Post('create')
-  async create(@Body() body: Root) {
+  async create(@Body() body: Root, @Res({ passthrough: true }) res: Response) {
     const context: Context = {
       owner: this.settings.config.github.owner,
       repo: body.repo,
     };
 
     try {
-      const check = await this.service.check(
-        this.settings.appInfo(),
-        context,
-        body,
-      );
-      if (check !== 0) {
-        throw new Error(`check tag failed. code is ${check}`);
-      }
+      await this.service.check(this.settings.appInfo(), context, body);
     } catch (err) {
       return {
         code: 201,

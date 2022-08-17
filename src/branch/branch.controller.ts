@@ -37,7 +37,7 @@ export class BranchController {
   @Put(':branch')
   async lock(@Param('branch') branch: string, @Body() body: IBranchPutOptions) {
     try {
-      throw new Error('not suppoted');
+      throw 'not suppoted';
       await this.service.lock(body, branch);
       return {
         code: 200,
