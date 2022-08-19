@@ -47,7 +47,7 @@ export class TagService {
         throw `create ref failed! code: ${createRef.status}`;
       }
     } catch (err) {
-      throw `data error, please check!`;
+      throw err;
     }
   }
 
@@ -62,6 +62,7 @@ export class TagService {
 
     const octokit = new Octokit({ auth: token });
 
+    // 检查服务器上是否存在该 commit
     try {
       await octokit.git.getCommit({
         ...context,
@@ -74,16 +75,18 @@ export class TagService {
     const tag = config.data.tag;
     const sha = config.data.object;
     let tag_sha = '';
-    // 检查 tag 是否存在
 
+    // 检查 tag 是否存在
     let check;
     try {
       check = await octokit.git.getRef({
         ...context,
-        ref: `tags/${config.data.tag}`,
+        ref: 'tags/' + config.data.tag,
       });
-    } catch (err) {
-      throw 'get ref failed.';
+    } catch (err) {}
+
+    if (check === undefined) {
+      return;
     }
 
     if (check.data.object.type === 'tag') {
@@ -107,7 +110,7 @@ export class TagService {
         throw `tag <${tag}> does not match hash <${sha}>`;
       }
     } catch (e) {
-      throw `ref exist, but tag <${tag}> not exist.`;
+      throw e;
     }
   }
   async uploadFile(app: App, context: Context, root: Root) {

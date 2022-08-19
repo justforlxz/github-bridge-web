@@ -42,7 +42,7 @@ export class TagController {
     } catch (err) {
       return {
         code: 201,
-        message: 'create tag failed.',
+        message: err,
         data: body,
       };
     }
