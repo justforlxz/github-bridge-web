@@ -1,7 +1,7 @@
 # Docker多阶段构建
 
 ### DEV环境 ###
-FROM node:14.17.3 AS development
+FROM node:18.7.0 AS development
 
 # 定位到容器工作目录
 WORKDIR /usr/src/app
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 ### PROD环境 ###
-FROM node:14.17.3 as production
+FROM node:18.7.0 as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
