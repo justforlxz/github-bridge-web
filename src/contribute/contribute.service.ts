@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Root, Row, RowEnum, Repo, SourceValue } from 'src/types.cooperation';
 import { encode } from 'src/functions';
@@ -9,6 +9,7 @@ import { Octokit } from '@octokit/rest';
 
 @Injectable()
 export class ContributeService {
+  private readonly logger: Logger = new Logger(ContributeService.name);
   constructor(
     private readonly axios: HttpService,
     private readonly settings: SettingsService,
@@ -52,8 +53,10 @@ export class ContributeService {
         };
         contentRef = content.sha;
         if (content.content.replaceAll('\n', '') === encode(body)) {
+          this.logger.log(`已有相同内容，无需更新。`);
           return;
         }
+        this.logger.log(`监测到新内容，正在更新...`);
       } catch (err) {}
 
       await octokit.repos.createOrUpdateFileContents({
@@ -72,6 +75,7 @@ export class ContributeService {
         },
         sha: contentRef,
       });
+      this.logger.log(`更新成功!`);
     } catch (e) {
       throw e;
     }
