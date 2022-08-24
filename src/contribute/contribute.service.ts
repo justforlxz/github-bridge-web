@@ -28,7 +28,7 @@ export class ContributeService {
     markdown += `| --- | --- | --- | --- |\n`;
     return markdown;
   }
-  async upload(filename: string, body: string) {
+  async upload(filename: string, body: string, debug: boolean) {
     const context = {
       owner: this.settings.config.github.owner,
       repo: 'developer-center',
@@ -52,6 +52,10 @@ export class ContributeService {
           content: string;
         };
         contentRef = content.sha;
+        if (debug) {
+          this.logger.log(content.content.replaceAll('\n', ''));
+          this.logger.log(encode(body));
+        }
         if (content.content.replaceAll('\n', '') === encode(body)) {
           this.logger.log(`已有相同内容，无需更新。`);
           return;
@@ -83,7 +87,7 @@ export class ContributeService {
     return;
   }
 
-  async update() {
+  async update(debug: boolean) {
     const result: Row[] = [];
     let pageIndex = 1;
     do {
@@ -165,8 +169,8 @@ export class ContributeService {
     }
 
     try {
-      await this.upload('README.md', english);
-      await this.upload('README.zh.md', chinese);
+      await this.upload('README.md', english, debug);
+      await this.upload('README.zh.md', chinese, debug);
     } catch (err) {
       throw err;
     }
