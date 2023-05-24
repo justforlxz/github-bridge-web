@@ -15,15 +15,17 @@ export class ContributeService {
     private readonly settings: SettingsService,
   ) {}
   english() {
-    let markdown = `This page records summary statistics on the number of contributions deepin has made to upstream. The corresponding contributions have been submitted and merged into the upstream codebase.\n`;
-    markdown += `\nNote: Contributions submitted upstream do not always use the email of the deepin or uniontech domains.\n`;
+    let markdown = this.settings.config.contribute.header.i18n['en_US'];
+    markdown += `# Upstream Contribution Project Statistics\n`;
+    markdown += `Note: Contributions submitted upstream do not always use the email of the deepin or uniontech domains.\n`;
     markdown += `| Name | Lines Changed | Pull Requests | Repository |\n`;
     markdown += `| --- | --- | --- | --- |\n`;
     return markdown;
   }
   chinese() {
-    let markdown = `此页面展示了 deepin 对上游源码做出的贡献的数量统计。与之对应的贡献均已提交并合入到上游代码仓库中。\n`;
-    markdown += `\n注：对上游的代码贡献有可能使用了 deepin 或 uniontech 之外域名的邮箱。\n`;
+    let markdown = this.settings.config.contribute.header.i18n['zh_CN'];
+    markdown += `# 上游项目贡献统计\n`;
+    markdown += `注：对上游的代码贡献有可能使用了 deepin 或 uniontech 之外域名的邮箱。\n`;
     markdown += `| 项目 | 贡献代码行数 | 提交数量 | 仓库地址 |\n`;
     markdown += `| --- | --- | --- | --- |\n`;
     return markdown;

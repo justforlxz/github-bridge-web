@@ -6,6 +6,15 @@ import { exit } from 'process';
 export interface Root {
   github: Github;
   cooperation: Cooperation;
+  contribute: Contribute;
+}
+
+export interface Contribute {
+  header: {
+    i18n: {
+      [key: string]: string;
+    };
+  };
 }
 
 export interface Cooperation {
@@ -43,12 +52,9 @@ export class SettingsService {
     return this._config;
   }
   appInfo() {
-    const { WORKDIR } = process.env;
     return {
       APP_ID: this.config.github.app.id,
-      APP_PRIVATE_KEY: fs
-        .readFileSync(path.join(WORKDIR, this.config.github.app.private_key))
-        .toString(),
+      APP_PRIVATE_KEY: this.config.github.app.private_key,
     };
   }
 }
